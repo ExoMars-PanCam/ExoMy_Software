@@ -7,18 +7,18 @@ import os
 config_filename = '../config/exomy.yaml'
 
 
-def get_driving_pins():
+def get_walking_pins():
     pin_list = []
     with open(config_filename, 'r') as file:
         param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for key, value in param_dict.items():
-        if('pin_drive_' in str(key)):
+        if('pin_walking_' in str(key)):
             pin_list.append(value)
     return pin_list
 
 def get_drive_pwm_neutral():
-     
+
     with open(config_filename, 'r') as file:
         param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
@@ -34,17 +34,13 @@ def get_drive_pwm_neutral():
 if __name__ == "__main__":
     print(
         '''
-$$$$$$$$\                     $$\      $$\           
-$$  _____|                    $$$\    $$$ |          
-$$ |      $$\   $$\  $$$$$$\  $$$$\  $$$$ |$$\   $$\ 
-$$$$$\    \$$\ $$  |$$  __$$\ $$\$$\$$ $$ |$$ |  $$ |
-$$  __|    \$$$$  / $$ /  $$ |$$ \$$$  $$ |$$ |  $$ |
-$$ |       $$  $$<  $$ |  $$ |$$ |\$  /$$ |$$ |  $$ |
-$$$$$$$$\ $$  /\$$\ \$$$$$$  |$$ | \_/ $$ |\$$$$$$$ |
-\________|\__/  \__| \______/ \__|     \__| \____$$ |
-                                           $$\   $$ |
-                                           \$$$$$$  |
-                                            \______/ 
+███████╗██╗  ██╗ ██████╗ ███╗   ███╗██╗   ██╗    ██████╗     ██████╗ 
+██╔════╝╚██╗██╔╝██╔═══██╗████╗ ████║╚██╗ ██╔╝    ╚════██╗   ██╔═████╗
+█████╗   ╚███╔╝ ██║   ██║██╔████╔██║ ╚████╔╝      █████╔╝   ██║██╔██║
+██╔══╝   ██╔██╗ ██║   ██║██║╚██╔╝██║  ╚██╔╝      ██╔═══╝    ████╔╝██║
+███████╗██╔╝ ██╗╚██████╔╝██║ ╚═╝ ██║   ██║       ███████╗██╗╚██████╔╝
+╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝ ╚═════╝ 
+                                                                     
         '''
     )
     print(

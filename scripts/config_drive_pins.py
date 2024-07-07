@@ -19,51 +19,59 @@ pin_dict = {
 
 }
 
-pwm = Adafruit_PCA9685.PCA9685(busnum=1)
-# For most motors a pwm frequency of 50Hz is normal
-pwm_frequency = 50.0  # Hz
-pwm.set_pwm_freq(pwm_frequency)
-# The cycle is the inverted frequency converted to milliseconds
-cycle = 1.0/pwm_frequency * 1000.0  # ms
-
-# The time the pwm signal is set to on during the duty cycle
-on_time_1 = 2.4  # ms
-on_time_2 = 1.5  # ms
-
-# Duty cycle is the percentage of a cycle the signal is on
-duty_cycle_1 = on_time_1/cycle
-duty_cycle_2 = on_time_2/cycle
-
-# The PCA 9685 board requests a 12 bit number for the duty_cycle
-value_1 = 200 #int(duty_cycle_1*4096.0)
-value_2 = 400#int(duty_cycle_2*4096.0)
 
 class Motor():
-    def __init__(self, pin):
+    # For most motors a pwm frequency of 50Hz is normal
+    pwm_frequency = 50.0  # Hz
+
+    # The cycle is the inverted frequency converted to milliseconds
+    cycle = 1.0/pwm_frequency * 1000.0  # ms
+
+    # The time the pwm signal is set to on during the duty cycle
+    on_time_1 = 2.4  # ms
+    on_time_2 = 1.5  # ms
+
+    # Duty cycle is the percentage of a cycle the signal is on
+    duty_cycle_1 = on_time_1/cycle
+    duty_cycle_2 = on_time_2/cycle
+
+    # The PCA 9685 board requests a 12 bit number for the duty_cycle
+    value_1 = 200 #int(duty_cycle_1*4096.0)
+    value_2 = 400#int(duty_cycle_2*4096.0)
+
+    def __init__(self, pin, addr=0x40, busnum=1):
 
         self.pin_name = 'pin_'
         self.pin_number = pin
+        self.addr_name = 'addr_'
+        self.addr = addr
+        self.bus_name = 'bus_'
+        self.busnum = busnum
+
+        # Configure pwm method
+        self.pwm = Adafruit_PCA9685.PCA9685(address=self.addr, busnum=self.busnum)
+        self.pwm.set_pwm_freq(self.pwm_frequency)
 
     def wiggle_motor(self):
 
         # Set the motor to the second value
-        pwm.set_pwm(self.pin_number, 0, value_2)
+        self.pwm.set_pwm(self.pin_number, 0, self.value_2)
         # Wait for 1 seconds
         time.sleep(1.0)
         # Set the motor to the first value
-        pwm.set_pwm(self.pin_number, 0, value_1)
+        self.pwm.set_pwm(self.pin_number, 0, self.value_1)
         # Wait for 1 seconds
         time.sleep(1.0)
         # Set the motor to neutral
-        pwm.set_pwm(self.pin_number, 0, 307)
+        self.pwm.set_pwm(self.pin_number, 0, 307)
         # Wait for half seconds
         time.sleep(0.5)
         # Stop the motor
-        pwm.set_pwm(self.pin_number, 0, 0)
+        self.pwm.set_pwm(self.pin_number, 0, 0)
 
     def stop_motor(self):
         # Turn the motor off
-        pwm.set_pwm(self.pin_number, 0, 0)
+        self.pwm.set_pwm(self.pin_number, 0, 0)
 
 
 def print_exomy_layout():
@@ -103,17 +111,13 @@ def update_config_file():
 if __name__ == "__main__":
     print(
         '''
-$$$$$$$$\                     $$\      $$\           
-$$  _____|                    $$$\    $$$ |          
-$$ |      $$\   $$\  $$$$$$\  $$$$\  $$$$ |$$\   $$\ 
-$$$$$\    \$$\ $$  |$$  __$$\ $$\$$\$$ $$ |$$ |  $$ |
-$$  __|    \$$$$  / $$ /  $$ |$$ \$$$  $$ |$$ |  $$ |
-$$ |       $$  $$<  $$ |  $$ |$$ |\$  /$$ |$$ |  $$ |
-$$$$$$$$\ $$  /\$$\ \$$$$$$  |$$ | \_/ $$ |\$$$$$$$ |
-\________|\__/  \__| \______/ \__|     \__| \____$$ |
-                                           $$\   $$ |
-                                           \$$$$$$  |
-                                            \______/ 
+███████╗██╗  ██╗ ██████╗ ███╗   ███╗██╗   ██╗    ██████╗     ██████╗ 
+██╔════╝╚██╗██╔╝██╔═══██╗████╗ ████║╚██╗ ██╔╝    ╚════██╗   ██╔═████╗
+█████╗   ╚███╔╝ ██║   ██║██╔████╔██║ ╚████╔╝      █████╔╝   ██║██╔██║
+██╔══╝   ██╔██╗ ██║   ██║██║╚██╔╝██║  ╚██╔╝      ██╔═══╝    ████╔╝██║
+███████╗██╔╝ ██╗╚██████╔╝██║ ╚═╝ ██║   ██║       ███████╗██╗╚██████╔╝
+╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝   ╚═╝       ╚══════╝╚═╝ ╚═════╝ 
+                                                                     
         '''
     )
     print(
@@ -121,7 +125,10 @@ $$$$$$$$\ $$  /\$$\ \$$$$$$  |$$ | \_/ $$ |\$$$$$$$ |
 ###############
 Motor Configuration
 
-This scripts leads you through the configuration of the motors.
+This scripts leads you through the configuration of the drive and steer motors.
+These are connected to one of the motor controller hats, with the walking and
+PTU motors connected to a second motor controller hat.
+
 First we have to find out, to which pin of the PWM board a motor is connected.
 Look closely which motor moves and type in the answer.
 
@@ -208,14 +215,11 @@ All other controls will be explained in the process.
     update_config_file()
     print(
     '''
-    $$$$$$$$\ $$\           $$\           $$\                       $$\ 
-    $$  _____|\__|          \__|          $$ |                      $$ |
-    $$ |      $$\ $$$$$$$\  $$\  $$$$$$$\ $$$$$$$\   $$$$$$\   $$$$$$$ |
-    $$$$$\    $$ |$$  __$$\ $$ |$$  _____|$$  __$$\ $$  __$$\ $$  __$$ |
-    $$  __|   $$ |$$ |  $$ |$$ |\$$$$$$\  $$ |  $$ |$$$$$$$$ |$$ /  $$ |
-    $$ |      $$ |$$ |  $$ |$$ | \____$$\ $$ |  $$ |$$   ____|$$ |  $$ |
-    $$ |      $$ |$$ |  $$ |$$ |$$$$$$$  |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
-    \__|      \__|\__|  \__|\__|\_______/ \__|  \__| \_______| \_______|
-                                                                        
+███████╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██████╗ 
+██╔════╝██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██╔══██╗
+█████╗  ██║██╔██╗ ██║██║███████╗███████║█████╗  ██║  ██║
+██╔══╝  ██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║  ██║
+██║     ██║██║ ╚████║██║███████║██║  ██║███████╗██████╔╝
+╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═════╝
     ''')
 
