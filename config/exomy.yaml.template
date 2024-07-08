@@ -7,21 +7,30 @@
 # Pin numbers for motors on PWM board
 pin_drive_fl: 14
 pin_steer_fl: 12
+pin_walk_fl: 0
 
 pin_drive_fr: 2
 pin_steer_fr: 0
+pin_walk_fr: 0
 
 pin_drive_cl: 6
 pin_steer_cl: 7
+pin_walk_cl: 0
 
 pin_drive_cr: 4
 pin_steer_cr: 5
+pin_walk_cr: 0
 
 pin_drive_rl: 15
 pin_steer_rl: 13
+pin_walk_rl: 0
 
 pin_drive_rr: 3
 pin_steer_rr: 1
+pin_walk_rr: 0
+
+pin_ptu_pan: 0
+pin_ptu_tilt: 0
 
 ## PWM values
 # Those values highly depend on the motors and pwm board used

@@ -85,7 +85,7 @@ def print_exomy_layout():
     )
 
 
-def update_config_file():
+def update_config_file(pin_dict):
     file_name = '../config/exomy.yaml'
     template_file_name = file_name+'.template'
 
@@ -212,7 +212,7 @@ All other controls will be explained in the process.
     print("You assigned {}/12 motors.".format(len(pin_dict.keys())))
 
     print('Write to config file.\n')
-    update_config_file()
+    update_config_file(pin_dict)
     print(
     '''
 ███████╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██████╗ 

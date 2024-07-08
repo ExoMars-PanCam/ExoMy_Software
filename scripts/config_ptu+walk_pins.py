@@ -88,7 +88,7 @@ All other controls will be explained in the process.
                 'Was it a walking or PTU that moved, or should I repeat the movement? ')
             type_selection = input('(w)alking (p)tu (r)epeat - (n)one (f)inish_configuration\n')
             if(type_selection == 'w'):
-                motor.pin_name += 'walking_'
+                motor.pin_name += 'walk_'
                 print('Good job\n')
                 break
             elif(type_selection == 'p'):
@@ -119,6 +119,7 @@ All other controls will be explained in the process.
                         pos = int(pos_selection)
                         if(pos >= 1 and pos <= 8):
                             motor.pin_name += pos_names[pos]
+                            print(f'{motor.pin_name}')
                             break
                         else:
                             print('The input was not a number between 1 and 8\n')
@@ -147,7 +148,7 @@ All other controls will be explained in the process.
     print("You assigned {}/8 motors.".format(len(pin_dict.keys())))
 
     print('Write to config file.\n')
-    update_config_file()
+    update_config_file(pin_dict)
     print(
     '''
 ███████╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██████╗ 
@@ -157,4 +158,3 @@ All other controls will be explained in the process.
 ██║     ██║██║ ╚████║██║███████║██║  ██║███████╗██████╔╝
 ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═════╝
     ''')
-
