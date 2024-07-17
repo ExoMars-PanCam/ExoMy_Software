@@ -58,5 +58,21 @@ drive_pwm_neutral: 307
 # PWW range around driving neutral position
 drive_pwm_range: 41
 
+# PWM values for the neutral walking position
+walk_pwm_neutral_fl: 300
+walk_pwm_neutral_fr: 300
+walk_pwm_neutral_cl: 300
+walk_pwm_neutral_cr: 300
+walk_pwm_neutral_rl: 300
+walk_pwm_neutral_rr: 300
+
+# PWW range around walking neutral position
+walk_pwm_range_fl: 185
+walk_pwm_range_fr: 185
+walk_pwm_range_cl: 185
+walk_pwm_range_cr: 185
+walk_pwm_range_rl: 185
+walk_pwm_range_rr: 185
+
 # Select connected controller (possible options: "logitech-F710" or "xbox-one")
 controller: "logitech-F710"
