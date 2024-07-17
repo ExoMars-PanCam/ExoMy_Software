@@ -25,7 +25,7 @@ pin_dict = {
 
 # Found using the pi command 'sudo i2cdetect -y 1' with the 1 being bus
 # number
-address=0x42
+address=0x41
 busnum =1
 
 def print_exomy_layout():
@@ -141,7 +141,7 @@ All other controls will be explained in the process.
         print_exomy_layout()        
         
         pin = pin_dict[pin_name]
-        motor = Motor(pin)
+        motor = Motor(pin, addr=address, busnum=busnum)
         motor.wiggle_motor()
         input('Press button to continue')
     

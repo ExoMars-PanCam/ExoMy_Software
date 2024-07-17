@@ -6,6 +6,11 @@ import os
 
 DRIVE_MOTOR, STEER_MOTOR = [0, 1]
 
+# Found using the pi command 'sudo i2cdetect -y 1' with the 1 being bus
+# number
+address=0x40
+busnum =1
+
 pos_names = {
     1: 'fl',
     2: 'fr',
