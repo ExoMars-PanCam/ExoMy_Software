@@ -26,7 +26,7 @@ class Motors():
 
     def __init__(self):
 
-        # Dictionary containing the pins of all motors
+        # Dictionary containing the pins of all drive motors
         self.pins = {
             'drive': {},
             'steer': {}
@@ -52,7 +52,7 @@ class Motors():
         self.pins['steer'][self.RR] = rospy.get_param("pin_steer_rr")
 
         # PWM characteristics
-        self.pwm = Adafruit_PCA9685.PCA9685(busnum=1)
+        self.pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)
         self.pwm.set_pwm_freq(50)  # Hz
 
         self.steering_pwm_neutral = [None] * 6
