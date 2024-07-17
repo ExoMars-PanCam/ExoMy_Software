@@ -4,8 +4,11 @@ import rospy
 
 from exomy.msg import MotorCommands
 from motors import Motors
+from walking import Walking
 
+walking = Walking()
 motors = Motors()
+
 global watchdog_timer
 
 
@@ -22,11 +25,13 @@ def callback(cmds):
 
 def shutdown():
     motors.stopMotors()
+    walking.sit()
 
 
 def watchdog(event):
     rospy.loginfo("Watchdog fired. Stopping driving motors.")
     motors.stopMotors()
+    walking.sit()
 
 
 if __name__ == "__main__":
