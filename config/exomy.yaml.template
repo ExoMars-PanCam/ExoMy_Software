@@ -74,5 +74,13 @@ walk_pwm_range_cr: 185
 walk_pwm_range_rl: 185
 walk_pwm_range_rr: 185
 
+# PWM values for the neutral ptu position
+ptu_pwm_neutral_pan: 300
+ptu_pwm_neutral_tilt: 300
+
+# PWM range around ptu neutral position
+ptu_pwm_range_pan: 185
+ptu_pwm_range_tilt: 185
+
 # Select connected controller (possible options: "logitech-F710" or "xbox-one")
 controller: "logitech-F710"
