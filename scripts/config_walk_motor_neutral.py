@@ -4,7 +4,7 @@ import yaml
 import time
 import os
 
-config_filename = '../config/exomy_new.yaml'
+config_filename = '../config/exomy.yaml'
 
 
 def get_walking_motor_pins():
