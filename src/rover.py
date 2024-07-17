@@ -22,12 +22,12 @@ class Rover():
         # y = axes width
         
         # Rear (r = rear)
-        self.wheel_rx = 14.0
-        self.wheel_ry = 20.3
+        self.wheel_rx = 16.0
+        self.wheel_ry = 27.0
         
         # Front (f = front)
         self.wheel_fx = 16.0
-        self.wheel_fy = 20.3
+        self.wheel_fy = 27.0
         
         # Maxium steering angle applied to Ackermann (not for Point Turn and Crabbing)
         max_steering_angle = 45
