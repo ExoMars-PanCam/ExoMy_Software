@@ -25,7 +25,7 @@ class Walking():
     def __init__(self):
         # Dictionary containing the walking pins
         self.pins = {
-            'walking': {}
+            'walk': {}
         }
 
         # Set variables for the GPIO walking pins
@@ -43,19 +43,19 @@ class Walking():
         self.walking_pwm_neutral = [None] * 6
         self.walking_pwm_range = [None] * 6
 
-        self.walking_pwm_neutral[self.FL] = rospy.get_param("steer_pwm_neutral_fl")
-        self.walking_pwm_neutral[self.FR] = rospy.get_param("steer_pwm_neutral_fr")
-        self.walking_pwm_neutral[self.CL] = rospy.get_param("steer_pwm_neutral_cl")
-        self.walking_pwm_neutral[self.CR] = rospy.get_param("steer_pwm_neutral_cr")
-        self.walking_pwm_neutral[self.RL] = rospy.get_param("steer_pwm_neutral_rl")
-        self.walking_pwm_neutral[self.RR] = rospy.get_param("steer_pwm_neutral_rr")
+        self.walking_pwm_neutral[self.FL] = rospy.get_param("walk_pwm_neutral_fl")
+        self.walking_pwm_neutral[self.FR] = rospy.get_param("walk_pwm_neutral_fr")
+        self.walking_pwm_neutral[self.CL] = rospy.get_param("walk_pwm_neutral_cl")
+        self.walking_pwm_neutral[self.CR] = rospy.get_param("walk_pwm_neutral_cr")
+        self.walking_pwm_neutral[self.RL] = rospy.get_param("walk_pwm_neutral_rl")
+        self.walking_pwm_neutral[self.RR] = rospy.get_param("walk_pwm_neutral_rr")
 
-        self.walking_pwm_range[self.FL] = rospy.get_param("steer_pwm_range_fl")
-        self.walking_pwm_range[self.FR] = rospy.get_param("steer_pwm_range_fr")
-        self.walking_pwm_range[self.CL] = rospy.get_param("steer_pwm_range_cl")
-        self.walking_pwm_range[self.CR] = rospy.get_param("steer_pwm_range_cr")
-        self.walking_pwm_range[self.RL] = rospy.get_param("steer_pwm_range_rl")
-        self.walking_pwm_range[self.RR] = rospy.get_param("steer_pwm_range_rr")
+        self.walking_pwm_range[self.FL] = rospy.get_param("walk_pwm_range_fl")
+        self.walking_pwm_range[self.FR] = rospy.get_param("walk_pwm_range_fr")
+        self.walking_pwm_range[self.CL] = rospy.get_param("walk_pwm_range_cl")
+        self.walking_pwm_range[self.CR] = rospy.get_param("walk_pwm_range_cr")
+        self.walking_pwm_range[self.RL] = rospy.get_param("walk_pwm_range_rl")
+        self.walking_pwm_range[self.RR] = rospy.get_param("walk_pwm_range_rr")
 
         self.stand()
 
