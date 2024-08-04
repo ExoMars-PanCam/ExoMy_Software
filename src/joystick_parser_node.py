@@ -65,12 +65,12 @@ def callback(data):
             "x_axis": 0,
             "y_axis": 1,
             "invert_x_axis": False,
-            "X_button": 2,
-            "Y_button": 3,
+            "X_button": 3,
+            "Y_button": 4,
             "A_button": 0,
             "B_button": 1,
-            "start_button": 7,
-            "select_button": 6,
+            "start_button": 12,
+            "select_button": 11,
             "sensitivity": 0.11
         }
     else:
