@@ -21,7 +21,6 @@ if [ "$1" != "" ]; then
         -a | --autostart)       
                                 container_name="${container_name}_autostart"
                                 start_command="autostart"
-                                options="--restart always"
                                  
                                 ;;
         -s | --stop_autostart)  
@@ -36,7 +35,6 @@ if [ "$1" != "" ]; then
         -d | --devel)           
                                 container_name="${container_name}_devel"
                                 start_command="devel"
-                                options="--restart always"
                                 ;;  
         -h | --help )           echo "$help_text"
                                 exit
@@ -64,12 +62,16 @@ fi
 # Run docker container
 docker run \
     -it \
-    -v ~/ExoMy_Software/exomy:/root/exomy_ws/src/exomy \
-    -v ~/ExoMy_Software/exomy_msgs:/root/exomy_ws/src/exomy_msgs \
+    --rm \
+    -v /run/udev:/run/udev \
+    -v $PWD/exomy:/root/exomy_ws/src/exomy \
+    -v $PWD/exomy_msgs:/root/exomy_ws/src/exomy_msgs \
+    --net=ros \
     -p 8000:8000 \
     -p 8080:8080 \
     -p 9090:9090 \
     --privileged \
+    --env="DISPLAY=novnc:0.0" \
     ${options} \
     --name "${container_name}" \
     "${image_name}" \

@@ -7,10 +7,9 @@
   <maintainer email="max.ehrhardt@hotmail.de">Maximilian Ehrhardt</maintainer>
   <license>TODO: License declaration</license>
 
-  <buildtool_depend>ament_python</buildtool_depend>
-
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>camera_ros</exec_depend>
   <depend>exomy_msgs</depend>
   
   <export>

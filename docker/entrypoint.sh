@@ -8,9 +8,10 @@ then
 elif [[ $1 == "autostart" ]]
 then
 	cd "/root/exomy_ws"
-
-	source "/opt/ros/foxy/setup.bash"
-	colcon build
+	apt update
+	source "/opt/ros/humble/setup.bash"
+	rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y
+	colcon build --symlink-install
 	source "/root/exomy_ws/install/setup.bash"
 	
 	cd "/root/exomy_ws/src/exomy/gui"
@@ -27,7 +28,11 @@ then
 elif [[ $1 == "devel" ]]
 then
 	cd "/root/exomy_ws"
-	source "/opt/ros/foxy/setup.bash"
+	apt update
+	source "/opt/ros/humble/setup.bash"
+	rosdep install --from-paths src --ignore-src --skip-keys=libcamera -y
+	colcon build --symlink-install
+	source "/root/exomy_ws/install/setup.bash"
 	
 	bash
 else
