@@ -6,26 +6,28 @@ import os
 
 config_filename = '../config/exomy.yaml'
 
+i2c_address=0x40 # For walking and PTU
+i2c_busnum =1
 
-def get_steering_motor_pins():
-    steering_motor_pins = {}
+def get_walking_motor_pins():
+    walking_motor_pins = {}
     with open(config_filename, 'r') as file:
         param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for param_key, param_value in param_dict.items():
-        if('pin_steer_' in str(param_key)):
-            steering_motor_pins[param_key] = param_value
-    return steering_motor_pins
+        if('pin_walk_' in str(param_key)):
+            walking_motor_pins[param_key] = param_value
+    return walking_motor_pins
 
-def get_steering_pwm_neutral_values():
-    steering_pwm_neutral_values = {}
+def get_walking_pwm_neutral_values():
+    walking_pwm_neutral_values = {}
     with open(config_filename, 'r') as file:
         param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for param_key, param_value in param_dict.items():
-        if('steer_pwm_neutral_' in str(param_key)):
-            steering_pwm_neutral_values[param_key] = param_value
-    return steering_pwm_neutral_values
+        if('walk_pwm_neutral_' in str(param_key)):
+            walking_pwm_neutral_values[param_key] = param_value
+    return walking_pwm_neutral_values
 
 
 def get_position_name(name):
@@ -46,11 +48,11 @@ def get_position_name(name):
     return position_name
 
 
-def update_config_file(steering_pwm_neutral_dict):
+def update_config_file(walking_pwm_neutral_dict):
     output = ''
     with open(config_filename, 'rt') as file:
         for line in file:
-            for key, value in steering_pwm_neutral_dict.items():
+            for key, value in walking_pwm_neutral_dict.items():
                 if(key in line):
                     line = line.replace(line.split(': ', 1)[
                                         1], str(value) + '\n')
@@ -76,8 +78,10 @@ if __name__ == "__main__":
     )
     print(
         '''
-This script helps you to set the neutral pwm values for the steering motors.
-You will iterate over all steering motors and set them to a neutral position.
+This script helps you to set the neutral pwm values for the walking motors.
+You will iterate over all walking motors and set them to a neutral position.
+The neutral position is defined as the vertical position such that the Rover
+is capable of driving around.
 The determined value is written to the config file.
 
 Commands:
@@ -96,7 +100,7 @@ ctrl+c - Exit script
         print("exomy.yaml does not exist. Finish config_motor_pins.py to generate it.")
         exit()
 
-    pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)
+    pwm = Adafruit_PCA9685.PCA9685(address=i2c_address, busnum=i2c_busnum)
     # For most motors a pwm frequency of 50Hz is normal
     pwm_frequency = 50.0  # Hz
     pwm.set_pwm_freq(pwm_frequency)
@@ -113,15 +117,15 @@ ctrl+c - Exit script
     # The PCA 9685 board requests a 12 bit number for the duty_cycle
     initial_value = int(duty_cycle*4096.0)
 
-    # Get all steering pins
-    steering_motor_pins = get_steering_motor_pins()
-    pwm_neutral_dict = get_steering_pwm_neutral_values()
+    # Get all walking pins
+    walking_motor_pins = get_walking_motor_pins()
+    pwm_neutral_dict = get_walking_pwm_neutral_values()
     # Iterating over all motors and fine tune the zero value
-    for pin_name, pin_value in steering_motor_pins.items():
-        pwm_neutral_name = pin_name.replace('pin_steer_', 'steer_pwm_neutral_')
+    for pin_name, pin_value in walking_motor_pins.items():
+        pwm_neutral_name = pin_name.replace('pin_walk_', 'walk_pwm_neutral_')
         pwm_neutral_value = pwm_neutral_dict[pwm_neutral_name] 
 
-        print('Set ' + get_position_name(pin_name) + ' steering motor: \n')
+        print('Set ' + get_position_name(pin_name) + ' walking motor: \n')
         while(1):
             # Set motor
             pwm.set_pwm(pin_value, 0, pwm_neutral_value)

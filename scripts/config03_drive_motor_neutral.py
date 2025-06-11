@@ -3,9 +3,12 @@ import Adafruit_PCA9685
 import yaml
 import time
 import os
-from config_drive_pins import Motor, update_config_file
+from config02_drive_pins import Motor, update_config_file
 
 config_filename = '../config/exomy.yaml'
+
+i2c_address=0x41 # For steering and drive
+i2c_busnum =1
 
 
 def get_drive_pins():
@@ -19,7 +22,6 @@ def get_drive_pins():
     return pin_list
 
 def get_drive_pwm_neutral():
-
     with open(config_filename, 'r') as file:
         param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
@@ -57,13 +59,13 @@ On each motor you have to turn the correction screw until the motor really stand
         exit()
 
     #Default Motor Hat Address for Drive motors
-    pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)
+    pwm = Adafruit_PCA9685.PCA9685(address=i2c_address, busnum=i2c_busnum)
 
     '''
     The drive_pwm_neutral value is determined from the exomy.yaml file.
     But it can be also calculated from the values of the PWM board and motors, 
     like shown in the following calculation:
-
+    '''
     # For most motors a pwm frequency of 50Hz is normal
     pwm_frequency = 50.0  # Hz
     pwm.set_pwm_freq(pwm_frequency)
@@ -79,7 +81,6 @@ On each motor you have to turn the correction screw until the motor really stand
 
     # The PCA 9685 board requests a 12 bit number for the duty_cycle
     value = int(duty_cycle*4096.0) # 307
-    '''
 
     value = get_drive_pwm_neutral()
     pin_list = get_drive_pins()

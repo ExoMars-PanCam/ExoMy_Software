@@ -3,13 +3,9 @@ import Adafruit_PCA9685
 import time
 from shutil import copyfile
 import os
+from config02_drive_pins import Motor, update_config_file
 
-DRIVE_MOTOR, STEER_MOTOR = [0, 1]
-
-# Found using the pi command 'sudo i2cdetect -y 1' with the 1 being bus
-# number
-address=0x40
-busnum =1
+WALK_MOTOR, PTU_MOTOR = [2, 3]
 
 pos_names = {
     1: 'fl',
@@ -18,66 +14,16 @@ pos_names = {
     4: 'cr',
     5: 'rl',
     6: 'rr',
+    7: 'pan',
+    8: 'tilt',
 }
 
 pin_dict = {
 
 }
 
-
-class Motor():
-    # For most motors a pwm frequency of 50Hz is normal
-    pwm_frequency = 50.0  # Hz
-
-    # The cycle is the inverted frequency converted to milliseconds
-    cycle = 1.0/pwm_frequency * 1000.0  # ms
-
-    # The time the pwm signal is set to on during the duty cycle
-    on_time_1 = 2.4  # ms
-    on_time_2 = 1.5  # ms
-
-    # Duty cycle is the percentage of a cycle the signal is on
-    duty_cycle_1 = on_time_1/cycle
-    duty_cycle_2 = on_time_2/cycle
-
-    # The PCA 9685 board requests a 12 bit number for the duty_cycle
-    value_1 = 200 #int(duty_cycle_1*4096.0)
-    value_2 = 400#int(duty_cycle_2*4096.0)
-
-    def __init__(self, pin, addr=0x40, busnum=1):
-
-        self.pin_name = 'pin_'
-        self.pin_number = pin
-        self.addr_name = 'addr_'
-        self.addr = addr
-        self.bus_name = 'bus_'
-        self.busnum = busnum
-
-        # Configure pwm method
-        self.pwm = Adafruit_PCA9685.PCA9685(address=self.addr, busnum=self.busnum)
-        self.pwm.set_pwm_freq(self.pwm_frequency)
-
-    def wiggle_motor(self):
-
-        # Set the motor to the second value
-        self.pwm.set_pwm(self.pin_number, 0, self.value_2)
-        # Wait for 1 seconds
-        time.sleep(1.0)
-        # Set the motor to the first value
-        self.pwm.set_pwm(self.pin_number, 0, self.value_1)
-        # Wait for 1 seconds
-        time.sleep(1.0)
-        # Set the motor to neutral
-        self.pwm.set_pwm(self.pin_number, 0, 307)
-        # Wait for half seconds
-        time.sleep(0.5)
-        # Stop the motor
-        self.pwm.set_pwm(self.pin_number, 0, 0)
-
-    def stop_motor(self):
-        # Turn the motor off
-        self.pwm.set_pwm(self.pin_number, 0, 0)
-
+i2c_address=0x40 # For walking and PTU
+busnum =1
 
 def print_exomy_layout():
     print(
@@ -86,31 +32,14 @@ def print_exomy_layout():
              ||
         3 cl-||-cr 4
         5 rl====rr 6
+        
+        7 <--->
+        
+        8 ^
+          |
+          v
         '''
     )
-
-
-def update_config_file(pin_dict):
-    file_name = '../config/exomy.yaml'
-    template_file_name = file_name+'.template'
-
-    if not os.path.exists(file_name):
-        copyfile(template_file_name, file_name)
-        print("exomy.yaml.template was copied to exomy.yaml")
-
-    output = ''
-    with open(file_name, 'rt') as file:
-        for line in file:
-            for key, value in pin_dict.items():
-                if(key in line):
-                    line = line.replace(line.split(': ', 1)[
-                                        1], str(value) + '\n')
-
-                    break
-            output += line
-
-    with open(file_name, 'w') as file:
-        file.write(output)
 
 
 if __name__ == "__main__":
@@ -130,10 +59,8 @@ if __name__ == "__main__":
 ###############
 Motor Configuration
 
-This scripts leads you through the configuration of the drive and steer motors.
-These are connected to one of the motor controller hats, with the walking and
-PTU motors connected to a second motor controller hat.
-
+This scripts leads you through the configuration of the motors used on the 
+new motor controller hat.
 First we have to find out, to which pin of the PWM board a motor is connected.
 Look closely which motor moves and type in the answer.
 
@@ -145,24 +72,24 @@ All other controls will be explained in the process.
     )
 
     for pin_number in range(16):
-        motor = Motor(pin_number)
+        motor = Motor(pin_number, addr=i2c_address, busnum=busnum)
         motor.stop_motor()
 
     for pin_number in range(16):
-        motor = Motor(pin_number)
+        motor = Motor(pin_number, addr=i2c_address, busnum=busnum)
         motor.wiggle_motor()
         type_selection = ''
         while(1):
             print("Pin #{}".format(pin_number))
             print(
-                'Was it a steering or driving motor that moved, or should I repeat the movement? ')
-            type_selection = input('(d)rive (s)teer (r)epeat - (n)one (f)inish_configuration\n')
-            if(type_selection == 'd'):
-                motor.pin_name += 'drive_'
+                'Was it a walking or PTU that moved, or should I repeat the movement? ')
+            type_selection = input('(w)alking (p)tu (r)epeat - (n)one (f)inish_configuration\n')
+            if(type_selection == 'w'):
+                motor.pin_name += 'walk_'
                 print('Good job\n')
                 break
-            elif(type_selection == 's'):
-                motor.pin_name += 'steer_'
+            elif(type_selection == 'p'):
+                motor.pin_name += 'ptu_'
                 print('Good job\n')
                 break                
             elif(type_selection == 'r'):
@@ -175,25 +102,26 @@ All other controls will be explained in the process.
                 print('Finishing calibration at pin {}.'.format(pin_number))
                 break
             else:
-                print('Input must be d, s, r, n or f\n')
+                print('Input must be w, p, r, n or f\n')
         
-        if (type_selection == 'd' or type_selection == 's'):
+        if (type_selection == 'w' or type_selection == 'p'):
             while(1):
                 print_exomy_layout()
                 pos_selection = input(
-                    'Type the position of the motor that moved.[1-6] or (r)epeat\n')
+                    'Type the position of the motor that moved.[1-8] or (r)epeat\n')
                 if(pos_selection == 'r'):
                     print('Look closely\n')
                 else:
                     try:
                         pos = int(pos_selection)
-                        if(pos >= 1 and pos <= 6):
+                        if(pos >= 1 and pos <= 8):
                             motor.pin_name += pos_names[pos]
+                            print(f'{motor.pin_name}')
                             break
                         else:
-                            print('The input was not a number between 1 and 6\n')
+                            print('The input was not a number between 1 and 8\n')
                     except ValueError:
-                        print('The input was not a number between 1 and 6\n')
+                        print('The input was not a number between 1 and 8\n')
             
             pin_dict[motor.pin_name] = motor.pin_number
             print('Motor set!\n')
@@ -210,11 +138,11 @@ All other controls will be explained in the process.
         print_exomy_layout()        
         
         pin = pin_dict[pin_name]
-        motor = Motor(pin)
+        motor = Motor(pin, addr=i2c_address, busnum=busnum)
         motor.wiggle_motor()
         input('Press button to continue')
     
-    print("You assigned {}/12 motors.".format(len(pin_dict.keys())))
+    print("You assigned {}/8 motors.".format(len(pin_dict.keys())))
 
     print('Write to config file.\n')
     update_config_file(pin_dict)
@@ -227,4 +155,3 @@ All other controls will be explained in the process.
 ██║     ██║██║ ╚████║██║███████║██║  ██║███████╗██████╔╝
 ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═════╝
     ''')
-
