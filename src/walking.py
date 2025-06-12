@@ -74,31 +74,36 @@ class Walking():
             time.sleep(0.05)
 
     def stand(self):
-        # Raise up the robot
+        # Raise up the robot to the lean position
         self.transition(160, 0, True)
+        self.wave()
 
     def sit(self):
         # Sit the robot down
         self.transition(0, 160, False)
 
-    # def wave(self):
-    #     # Transition from standing to -60 position to take weight off the fl wheel
-    #     self.transition(0, 60, False)
-    #     # Wave the fl wheel
-    #     walk_fl = self.pins['walk'][self.FL]
-    #     pwm_fl_neutral = self.walking_pwm_neutral[self.FL]
+    def wave(self):
+        # Transition from standing to -50 position to take weight off the fl wheel
+        self.transition(0, -50, True)
+        
+        # Wave the fl wheel
+        walk_fl = self.pins['walk'][self.FL]
+        pwm_fl_neutral = self.walking_pwm_neutral[self.FL]
 
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral))
-    #     time.sleep(1)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
-    #     time.sleep(2)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
-    #     time.sleep(0.3)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
-    #     time.sleep(0.3)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
-    #     time.sleep(0.3)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
-    #     time.sleep(2)
-    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral))
-    #     time.sleep(1)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 50))
+        time.sleep(1)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+        time.sleep(2)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
+        time.sleep(0.3)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+        time.sleep(0.3)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
+        time.sleep(0.3)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+        time.sleep(2)
+        self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 50))
+        time.sleep(1)
+
+        # Transition back to standing
+        self.transition(-50, 0, False)
