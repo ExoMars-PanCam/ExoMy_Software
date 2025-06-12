@@ -52,7 +52,7 @@ class Motors():
         self.pins['steer'][self.RR] = rospy.get_param("pin_steer_rr")
 
         # PWM characteristics
-        self.pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)
+        self.pwm = Adafruit_PCA9685.PCA9685(address=0x41, busnum=1)
         self.pwm.set_pwm_freq(50)  # Hz
 
         self.steering_pwm_neutral = [None] * 6
@@ -85,25 +85,25 @@ class Motors():
         self.wiggle()
 
     def wiggle(self):
-        time.sleep(0.1)
+        time.sleep(0.2)
+        
         self.pwm.set_pwm(self.pins['steer'][self.FL], 0,
                          int(self.steering_pwm_neutral[self.FL] + self.steering_pwm_range[self.FL] * 0.3))
-        time.sleep(0.1)
         self.pwm.set_pwm(self.pins['steer'][self.FR], 0,
                          int(self.steering_pwm_neutral[self.FR] + self.steering_pwm_range[self.FR] * 0.3))
-        time.sleep(0.3)
+        time.sleep(0.5)
+
         self.pwm.set_pwm(self.pins['steer'][self.FL], 0,
                          int(self.steering_pwm_neutral[self.FL] - self.steering_pwm_range[self.FL] * 0.3))
-        time.sleep(0.1)
         self.pwm.set_pwm(self.pins['steer'][self.FR], 0,
                          int(self.steering_pwm_neutral[self.FR] - self.steering_pwm_range[self.FR] * 0.3))
-        time.sleep(0.3)
+        time.sleep(0.5)
+
         self.pwm.set_pwm(self.pins['steer'][self.FL], 0,
                          int(self.steering_pwm_neutral[self.FL]))
-        time.sleep(0.1)
         self.pwm.set_pwm(self.pins['steer'][self.FR], 0,
                          int(self.steering_pwm_neutral[self.FR]))
-        time.sleep(0.3)
+        time.sleep(0.2)
 
     def setSteering(self, steering_command):
         # Loop through pin dictionary. The items key is the wheel_name and the value the pin.

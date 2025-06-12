@@ -6,32 +6,34 @@ from exomy.msg import MotorCommands
 from motors import Motors
 from walking import Walking
 
-walking = Walking()
 motors = Motors()
+walking = Walking()
+walking.stand()
+# walking.wave()
 
-global watchdog_timer
+# global watchdog_timer
 
 
 def callback(cmds):
     motors.setSteering(cmds.motor_angles)
     motors.setDriving(cmds.motor_speeds)
 
-    global watchdog_timer
-    watchdog_timer.shutdown()
-    # If this timer runs longer than the duration specified,
-    # then watchdog() is called stopping the driving motors.
-    watchdog_timer = rospy.Timer(rospy.Duration(5.0), watchdog, oneshot=True)
+    # global watchdog_timer
+    # watchdog_timer.shutdown()
+    # # If this timer runs longer than the duration specified,
+    # # then watchdog() is called stopping the driving motors.
+    # # watchdog_timer = rospy.Timer(rospy.Duration(5.0), watchdog, oneshot=True)
 
 
 def shutdown():
     motors.stopMotors()
-    walking.sit()
+    # walking.sit()
 
 
 def watchdog(event):
     rospy.loginfo("Watchdog fired. Stopping driving motors.")
-    motors.stopMotors()
-    walking.sit()
+    # motors.stopMotors()
+    # walking.sit()
 
 
 if __name__ == "__main__":
@@ -40,8 +42,8 @@ if __name__ == "__main__":
     rospy.loginfo("Starting the motors node")
     rospy.on_shutdown(shutdown)
 
-    global watchdog_timer
-    watchdog_timer = rospy.Timer(rospy.Duration(1.0), watchdog, oneshot=True)
+    #global watchdog_timer
+    #watchdog_timer = rospy.Timer(rospy.Duration(1.0), watchdog, oneshot=True)
 
     sub = rospy.Subscriber(
         "/motor_commands", MotorCommands, callback, queue_size=1)

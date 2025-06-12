@@ -37,7 +37,7 @@ class Walking():
         self.pins['walk'][self.RR] = rospy.get_param("pin_walk_rr")
 
         # PWM characteristics
-        self.pwm = Adafruit_PCA9685.PCA9685(address=0x41, busnum=1)
+        self.pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)
         self.pwm.set_pwm_freq(50)  # Hz
 
         self.walking_pwm_neutral = [None] * 6
@@ -57,24 +57,48 @@ class Walking():
         self.walking_pwm_range[self.RL] = rospy.get_param("walk_pwm_range_rl")
         self.walking_pwm_range[self.RR] = rospy.get_param("walk_pwm_range_rr")
 
-        self.stand()
+    def transition(self, start_pos, end_pos, stand):
+        """
+        Slowly transition the motors from start_pos to end_pos with the specified increment.
+        """
+        if stand:
+            increment = -1
+        else:
+            increment = 1
 
-        self.sit()
+        for pos in range(start_pos, end_pos, increment):
+            for wheel_name, motor_pin in self.pins['walk'].items():
+                duty_cycle = self.walking_pwm_neutral[wheel_name] + self.wheel_directions[wheel_name] * pos
+                self.pwm.set_pwm(motor_pin, 0, duty_cycle)
+
+            time.sleep(0.05)
 
     def stand(self):
         # Raise up the robot
-  
-        for percent in range(0, 100):
-            time.sleep(0.1)
-            for wheel_name, motor_pin in self.pins['walk'].items():
-                duty_cycle = int(self.walking_pwm_neutral[wheel_name] * percent)
-                self.pwm.set_pwm(motor_pin, 0, duty_cycle)
+        self.transition(160, 0, True)
 
     def sit(self):
         # Sit the robot down
+        self.transition(0, 160, False)
 
-        for percent in range(0, 100):
-            time.sleep(0.1)
-            for wheel_name, motor_pin in self.pins['walk'].items():
-                duty_cycle = int(self.walking_pwm_neutral[wheel_name] + self.walking_pwm_range[wheel_name] * self.wheel_directions[wheel_name] * percent)
-                self.pwm.set_pwm(motor_pin, 0, duty_cycle)
+    # def wave(self):
+    #     # Transition from standing to -60 position to take weight off the fl wheel
+    #     self.transition(0, 60, False)
+    #     # Wave the fl wheel
+    #     walk_fl = self.pins['walk'][self.FL]
+    #     pwm_fl_neutral = self.walking_pwm_neutral[self.FL]
+
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral))
+    #     time.sleep(1)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+    #     time.sleep(2)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
+    #     time.sleep(0.3)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+    #     time.sleep(0.3)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 130))
+    #     time.sleep(0.3)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral - 170))
+    #     time.sleep(2)
+    #     self.pwm.set_pwm(walk_fl, 0, int(pwm_fl_neutral))
+    #     time.sleep(1)
