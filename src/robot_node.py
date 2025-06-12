@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import time
 from exomy.msg import RoverCommand, MotorCommands, Screen
+from standing_modes import StandingMode
 import rospy
 from rover import Rover
 import message_filters
@@ -8,10 +9,14 @@ import message_filters
 
 global exomy
 exomy = Rover()
+standing_mode = StandingMode.UNKNOWN.value
 
 
 def joy_callback(message):
+    global standing_mode
     cmds = MotorCommands()
+
+    cmds.standing_mode = message.standing_mode
 
     if message.motors_enabled is True:
         exomy.setLocomotionMode(message.locomotion_mode)
@@ -23,6 +28,7 @@ def joy_callback(message):
     else:
         cmds.motor_angles = exomy.joystickToSteeringAngle(0, 0)
         cmds.motor_speeds = exomy.joystickToVelocity(0, 0)
+        cmds.standing_mode = message.standing_mode
 
     robot_pub.publish(cmds)
 

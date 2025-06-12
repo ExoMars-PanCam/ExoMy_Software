@@ -3,12 +3,13 @@ import time
 import rospy
 
 from exomy.msg import MotorCommands
+from standing_modes import StandingMode
 from motors import Motors
 from walking import Walking
 
 motors = Motors()
 walking = Walking()
-walking.stand()
+# walking.stand()
 # walking.wave()
 
 # global watchdog_timer
@@ -17,6 +18,13 @@ walking.stand()
 def callback(cmds):
     motors.setSteering(cmds.motor_angles)
     motors.setDriving(cmds.motor_speeds)
+
+    if cmds.standing_mode == StandingMode.SIT.value:
+        rospy.loginfo(f"Now going to sit be careful!!!!")
+        walking.sit()
+    elif cmds.standing_mode == StandingMode.STAND.value:
+        rospy.loginfo(f"Now going to stand be careful!!!!")
+        walking.stand()
 
     # global watchdog_timer
     # watchdog_timer.shutdown()
@@ -27,6 +35,7 @@ def callback(cmds):
 
 def shutdown():
     motors.stopMotors()
+    rospy.loginfo("Running this command")
     # walking.sit()
 
 
