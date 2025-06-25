@@ -18,6 +18,7 @@ walking = Walking()
 def callback(cmds):
     motors.setSteering(cmds.motor_angles)
     motors.setDriving(cmds.motor_speeds)
+    ptu.setPanTilt(cmds.ptu_angles)
 
     if cmds.standing_mode == StandingMode.SIT.value:
         rospy.loginfo(f"Now going to sit be careful!!!!")

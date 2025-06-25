@@ -15,6 +15,12 @@ class Rover():
     # Defining locomotion modes
     FAKE_ACKERMANN, ACKERMANN, POINT_TURN, CRABBING = range(0, 4)
 
+    # Define PTU limits
+    PTU_MIN_PAN = -70
+    PTU_MAX_PAN = 70
+    PTU_MIN_TILT = -50
+    PTU_MAX_TILT = 50
+
     def __init__(self):
         self.locomotion_mode = LocomotionMode.ACKERMANN
         
@@ -46,6 +52,9 @@ class Rover():
             self.ackermann_r_min = self.ackermann_fr_min
         else:
             self.ackermann_r_min = self.ackermann_rr_min
+
+        self.current_pan = 0
+        self.current_tilt = +30
         
     def setLocomotionMode(self, locomotion_mode_command):
         '''

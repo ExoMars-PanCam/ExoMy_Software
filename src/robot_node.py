@@ -25,8 +25,8 @@ def joy_callback(message):
             message.vel, message.steering)
         cmds.motor_speeds = exomy.joystickToVelocity(
             message.vel, message.steering)
-        cmds.ptu_angles = self.robot.joystickToPTUAngle(
-            msg.pan, msg.tilt, msg.ptu_reset)
+        cmds.ptu_angles = exomy.joystickToPTUAngle(
+            message.pan, message.tilt, message.ptu_reset)
     else:
         cmds.motor_angles = exomy.joystickToSteeringAngle(0, 0)
         cmds.motor_speeds = exomy.joystickToVelocity(0, 0)

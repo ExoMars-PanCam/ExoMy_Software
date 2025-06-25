@@ -77,3 +77,17 @@ class Ptu():
         time.sleep(0.5)
         self.pan_transition(125, self.pan_pwm_neutral, clockwise=True)
         time.sleep(2.0)
+
+    def setPanTilt(self, ptu_angles):
+        """
+        Set the pan and tilt angles of the PTU.
+        """
+        pan_angle, tilt_angle = ptu_angles
+
+        # Set the pan angle
+        pan_pwm = int(self.pan_pwm_neutral + self.pan_pwm_range * (pan_angle / 180.0))
+        self.pwm.set_pwm(self.pin_pan, 0, pan_pwm)
+
+        # Set the tilt angle
+        tilt_pwm = int(self.tilt_pwm_neutral + self.tilt_pwm_range * (tilt_angle / 180.0))
+        self.pwm.set_pwm(self.pin_tilt, 0, tilt_pwm)
