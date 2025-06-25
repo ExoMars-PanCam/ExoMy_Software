@@ -71,7 +71,7 @@ class Walking():
                 duty_cycle = self.walking_pwm_neutral[wheel_name] + self.wheel_directions[wheel_name] * pos
                 self.pwm.set_pwm(motor_pin, 0, duty_cycle)
 
-            time.sleep(0.08)
+            time.sleep(0.03)
 
     def stand(self):
         # Raise up the robot to the lean position
