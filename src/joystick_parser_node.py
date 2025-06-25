@@ -205,13 +205,13 @@ def callback(data):
     rover_cmd.steering = int(rover_cmd.steering)
 
     # The pan and tilt is described as an angle between -90...90
-    # Add a deadzone so that if the joystick is moved less than 50deg it does not send a command
+    # Add a deadzone so that if the joystick is moved less than 40deg it does not send a command
     pan = int(ptu_x * 180)
-    if (abs(pan) < 50):
+    if (abs(pan) < 40):
         pan = 0
 
     tilt = int(ptu_y * 180)
-    if (abs(tilt) < 50):
+    if (abs(tilt) < 40):
         tilt = 0
     rover_cmd.pan = pan
     rover_cmd.tilt = tilt

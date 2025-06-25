@@ -85,9 +85,9 @@ class Ptu():
         pan_angle, tilt_angle = ptu_angles
 
         # Set the pan angle
-        pan_pwm = int(self.pan_pwm_neutral + self.pan_pwm_range * (pan_angle / 180.0))
+        pan_pwm = int(self.pan_pwm_neutral + pan_angle )
         self.pwm.set_pwm(self.pin_pan, 0, pan_pwm)
 
         # Set the tilt angle
-        tilt_pwm = int(self.tilt_pwm_neutral + self.tilt_pwm_range * (tilt_angle / 180.0))
+        tilt_pwm = int(self.tilt_pwm_neutral + tilt_angle)
         self.pwm.set_pwm(self.pin_tilt, 0, tilt_pwm)

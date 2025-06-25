@@ -54,7 +54,7 @@ class Rover():
             self.ackermann_r_min = self.ackermann_rr_min
 
         self.current_pan = 0
-        self.current_tilt = +30
+        self.current_tilt = -30
         
     def setLocomotionMode(self, locomotion_mode_command):
         '''

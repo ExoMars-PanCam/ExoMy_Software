@@ -30,6 +30,7 @@ def joy_callback(message):
     else:
         cmds.motor_angles = exomy.joystickToSteeringAngle(0, 0)
         cmds.motor_speeds = exomy.joystickToVelocity(0, 0)
+        cmds.ptu_angles = exomy.joystickToPTUAngle(0, 0, True)
         cmds.standing_mode = message.standing_mode
 
     robot_pub.publish(cmds)
