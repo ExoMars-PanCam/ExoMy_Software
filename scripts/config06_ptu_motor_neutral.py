@@ -6,6 +6,9 @@ import os
 
 config_filename = '../config/exomy.yaml'
 
+i2c_address=0x40 # For walking and PTU
+i2c_busnum =1
+
 
 def get_ptu_motor_pins():
     ptu_motor_pins = {}
@@ -78,7 +81,7 @@ a - Decrease value for current pin
 d - Increase value for current pin
 q - Finish setting value for current pin
 
-[Every of these commands must be confirmed with the enter key]
+[Every one of these commands must be confirmed with the enter key]
 
 ctrl+c - Exit script
 ------------------------------------------------------------------------------
@@ -89,7 +92,7 @@ ctrl+c - Exit script
         print("exomy.yaml does not exist. Finish config_motor_pins.py to generate it.")
         exit()
 
-    pwm = Adafruit_PCA9685.PCA9685(address=0x41, busnum=1)
+    pwm = Adafruit_PCA9685.PCA9685(address=i2c_address, busnum=i2c_busnum)
     # For most motors a pwm frequency of 50Hz is normal
     pwm_frequency = 50.0  # Hz
     pwm.set_pwm_freq(pwm_frequency)
