@@ -1,6 +1,9 @@
 bool connected
 bool motors_enabled
+bool ptu_reset
 int64 standing_mode
 int64 locomotion_mode
 int64 vel
 int64 steering
+int64 pan
+int65 tilt

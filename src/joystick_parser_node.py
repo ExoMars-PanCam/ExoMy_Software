@@ -103,6 +103,8 @@ def callback(data):
     # Reading out joystick data
     y = data.axes[1]
     x = data.axes[0]
+    ptu_y = data.axes[3]
+    ptu_x = data.axes[2]
 
     if controller_function_map["invert_x_axis"] == True:
         x = x * -1
@@ -197,10 +199,34 @@ def callback(data):
     #
     rover_cmd.steering = math.atan2(y, x)*180.0/math.pi
 
-    rover_cmd.connected = True
-
     rover_cmd.vel = int(rover_cmd.vel)
     rover_cmd.steering = int(rover_cmd.steering)
+
+    # The pan and tilt is described as an angle between -90...90
+    # Add a deadzone so that if the joystick is moved less than 50deg it does not send a command
+    pan = int(ptu_x * 180)
+    if (abs(pan) < 50):
+        pan = 0
+
+    tilt = int(ptu_y * 180)
+    if (abs(tilt) < 50):
+        tilt = 0
+    rover_cmd.pan = pan
+    rover_cmd.tilt = tilt
+
+    # If the PTU thumbstick is clicked it will reset the pan and tilt
+    # Right Stick Button
+    if (data.buttons[10] == 1):
+        self.ptu_reset = True
+        self.get_logger().info("PTU reset!")
+        # Set a sleep timer, if not a button movement could be triggered falsely
+        time.sleep(0.5)
+    else:
+        self.ptu_reset = False
+
+    rover_cmd.ptu_reset = self.ptu_reset 
+
+    rover_cmd.connected = True
 
     pub.publish(rover_cmd)
 

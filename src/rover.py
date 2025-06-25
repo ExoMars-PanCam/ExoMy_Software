@@ -334,3 +334,37 @@ class Rover():
                     motor_speeds[self.RR] = -v
 
         return motor_speeds
+
+    def joystickToPTUAngle(self, pan_angle, tilt_angle, ptu_reset):
+        '''
+        Converts the steering command [angle of joystick] to angles for the PTU
+        '''
+
+        if ptu_reset:
+            self.current_pan = 0
+            self.current_tilt = -30
+
+        else:
+            prev_pan = self.current_pan
+            prev_tilt = self.current_tilt
+
+            # Add the delta from the controller
+            new_pan = prev_pan + (pan_angle * 0.01)
+            new_tilt = prev_tilt + (tilt_angle * 0.005)
+
+            # Ensure the angles are within the limits
+            if(new_pan > self.PTU_MAX_PAN):
+                self.current_pan = self.PTU_MAX_PAN
+            elif(new_pan < self.PTU_MIN_PAN):
+                self.current_pan = self.PTU_MIN_PAN
+            else:
+                self.current_pan = new_pan
+            
+            if(new_tilt > self.PTU_MAX_TILT):
+                self.current_tilt = self.PTU_MAX_TILT
+            elif(new_tilt < self.PTU_MIN_TILT):
+                self.current_tilt = self.PTU_MIN_TILT
+            else:
+                self.current_tilt = new_tilt
+        
+        return [int(self.current_pan), int(self.current_tilt)]

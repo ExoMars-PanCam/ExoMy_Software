@@ -29,7 +29,7 @@ class Ptu():
         self.pan_pwm_range = rospy.get_param("ptu_pwm_range_pan")
         self.tilt_pwm_range = rospy.get_param("ptu_pwm_range_tilt")
 
-        self.tilt_pwm_start = 170 #TODO! Move to config file
+        self.tilt_pwm_start = 185 #TODO! Move to config file
 
         self.wake() # First movement of the PTU
 
@@ -45,24 +45,24 @@ class Ptu():
         for pos in range(start_pos, end_pos, increment):
             self.pwm.set_pwm(self.pin_tilt, 0, pos)
 
-            time.sleep(0.1)
+            time.sleep(0.03)
 
     def pan_transition(self, start_pos, end_pos, clockwise=True):
         """
         Slowly transition the pan from start_pos to end_pos.
         """
         if clockwise:
-            increment = 1
+            increment = 2
         else:
-            increment = -1
+            increment = -2
 
         for pos in range(start_pos, end_pos, increment):
             self.pwm.set_pwm(self.pin_pan, 0, pos)
-            time.sleep(0.1)
+            time.sleep(0.02)
 
     def wake(self):
         # Start with the tilt moving up and then down.
-        self.tilt_transition(self.tilt_pwm_start, 435)
+        self.tilt_transition(self.tilt_pwm_start, 425)
         time.sleep(0.5)
         # Transition back to the neutral position
         self.tilt_transition(445, self.tilt_pwm_neutral, upwards=False)
@@ -73,7 +73,7 @@ class Ptu():
         time.sleep(0.5)
         
         #  Transition all the way anticlockwise to the end position
-        self.pan_transition(470, 125, clockwise=False)
+        self.pan_transition(455, 125, clockwise=False)
         time.sleep(0.5)
         self.pan_transition(125, self.pan_pwm_neutral, clockwise=True)
         time.sleep(2.0)
