@@ -43,8 +43,7 @@ class Ptu():
             increment = -1
 
         for pos in range(start_pos, end_pos, increment):
-                self.pwm.set_pwm(motor_pin, 0, duty_cycle)
-                self.pwm.set_pwm(self.pin_tilt, 0, pos)
+            self.pwm.set_pwm(self.pin_tilt, 0, pos)
 
             time.sleep(0.1)
 
@@ -63,18 +62,18 @@ class Ptu():
 
     def wake(self):
         # Start with the tilt moving up and then down.
-        tilt_transition(self.tilt_pwm_start, 435)
+        self.tilt_transition(self.tilt_pwm_start, 435)
         time.sleep(0.5)
         # Transition back to the neutral position
-        tilt_transition(445, self.tilt_pwm_neutral, upwards=False)
+        self.tilt_transition(445, self.tilt_pwm_neutral, upwards=False)
         time.sleep(1.0)
 
         # Transition from neutral clockwise to end position
-        pan_transition(self.pan_pwm_neutral, 470, clockwise=True)
+        self.pan_transition(self.pan_pwm_neutral, 470, clockwise=True)
         time.sleep(0.5)
         
         #  Transition all the way anticlockwise to the end position
-        pan_transition(470, 125, clockwise=False)
+        self.pan_transition(470, 125, clockwise=False)
         time.sleep(0.5)
-        pan_transition(125, self.pan_pwm_neutral, clockwise=True)
+        self.pan_transition(125, self.pan_pwm_neutral, clockwise=True)
         time.sleep(2.0)
