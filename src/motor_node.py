@@ -6,11 +6,11 @@ from exomy.msg import MotorCommands
 from standing_modes import StandingMode
 from motors import Motors
 from walking import Walking
+from ptu import Ptu
 
+ptu = Ptu()
 motors = Motors()
 walking = Walking()
-# walking.stand()
-# walking.wave()
 
 # global watchdog_timer
 
