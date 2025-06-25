@@ -17,6 +17,7 @@ locomotion_mode = LocomotionMode.ACKERMANN.value
 motors_enabled = False
 standing_mode = StandingMode.UNKNOWN.value
 toggle_standing = False
+ptu_reset = False
 
 
 def callback(data):
@@ -25,6 +26,7 @@ def callback(data):
     global motors_enabled
     global standing_mode
     global toggle_standing
+    global ptu_reset
 
     rover_cmd = RoverCommand()
 
@@ -217,14 +219,13 @@ def callback(data):
     # If the PTU thumbstick is clicked it will reset the pan and tilt
     # Right Stick Button
     if (data.buttons[10] == 1):
-        self.ptu_reset = True
-        self.get_logger().info("PTU reset!")
+        ptu_reset = True
         # Set a sleep timer, if not a button movement could be triggered falsely
         time.sleep(0.5)
     else:
-        self.ptu_reset = False
+        ptu_reset = False
 
-    rover_cmd.ptu_reset = self.ptu_reset 
+    rover_cmd.ptu_reset = ptu_reset 
 
     rover_cmd.connected = True
 

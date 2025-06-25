@@ -6,4 +6,4 @@ int64 locomotion_mode
 int64 vel
 int64 steering
 int64 pan
-int65 tilt
+int64 tilt
