@@ -45,7 +45,7 @@ class Ptu():
         for pos in range(start_pos, end_pos, increment):
             self.pwm.set_pwm(self.pin_tilt, 0, pos)
 
-            time.sleep(0.03)
+            time.sleep(0.02)
 
     def pan_transition(self, start_pos, end_pos, clockwise=True):
         """

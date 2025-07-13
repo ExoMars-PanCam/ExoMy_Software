@@ -359,7 +359,7 @@ class Rover():
 
             # Add the delta from the controller
             new_pan = prev_pan + (pan_angle * 0.01)
-            new_tilt = prev_tilt + (tilt_angle * 0.005)
+            new_tilt = prev_tilt + (tilt_angle * 0.01)
 
             # Ensure the angles are within the limits
             if(new_pan > self.PTU_MAX_PAN):
