@@ -32,6 +32,10 @@ def cleanup_and_exit(con=None, exit_code=0):
             except Exception as socket_error:
                 print(f"Error closing socket: {socket_error}")
 
+        # PTU back to default
+        ptu.pan_transition(290)
+        ptu.tilt_transition(340)
+
         # Stop all motors
         motors.stopMotors()
         motors.setDriving([0, 0, 0, 0, 0, 0])
@@ -111,7 +115,7 @@ def request_image(soc, sol, img):
     response = soc.recv(1024)
     print(f"Received echo: {response.decode('utf-8')}")
 
-    time.sleep(1)
+    time.sleep(3)
 
     return img
 
@@ -128,9 +132,34 @@ if __name__ == "__main__":
     sol = 1
     img = 1
 
+    ## Example of PTU and image sequence
+    # pan 420 out of limits and ignored
+    ptu.pan_transition(420)
+
+    # First position
+    ptu.pan_transition(410)
     img = request_image(con, sol, img)
+    
+    # Second position
+    ptu.pan_transition(300)
     img = request_image(con, sol, img)
+
+    # First tilt out of limits and ignored
+    ptu.tilt_transition(470)
+    # Tilt down
+    ptu.tilt_transition(460)
     img = request_image(con, sol, img)
+    
+    # Pan 160 is out of limits and ignored
+    ptu.pan_transition(160)
+    ptu.pan_transition(170)
+    img = request_image(con, sol, img)
+
+    # Final tilt out of limits and ignored
+    ptu.tilt_transition(210)
+    ptu.tilt_transition(220)
+    img = request_image(con, sol, img)
+
 
 
     ## ---------------------------------------------------------------------------------------------

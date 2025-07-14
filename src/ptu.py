@@ -32,53 +32,77 @@ class Ptu():
         # self.tilt_pwm_start = 380 #TODO! Move to config file
         self.tilt_pwm_start = 340
 
+        self.cur_pan = self.pan_pwm_neutral
+        self.cur_tilt = self.tilt_pwm_start
+
         # self.wake() # First movement of the PTU
 
-    def tilt_transition(self, start_pos, end_pos, upwards=True):
+    def tilt_transition(self, end_pos, upwards=True):
         """
-        Slowly transition the tilt from start_pos to end_pos.
+        Slowly transition the tilt from cur position to end_pos.
         """
-        if upwards:
-            increment = -1
-        else:
+        # Do a check to ensure in limits, otherwise reject
+        if end_pos > (self.tilt_pwm_neutral + self.tilt_pwm_range):
+            rospy.loginfo(f"Requested tilt position {end_pos} is out of range.")
+            return
+        if end_pos < (self.tilt_pwm_neutral - self.tilt_pwm_range):
+            rospy.loginfo(f"Requested tilt position {end_pos} is out of range.")
+            return
+
+        # Check if rotating downwards
+        if (end_pos - self.cur_tilt) > 0:
             increment = 1
-
-        for pos in range(start_pos, end_pos, increment):
-            self.pwm.set_pwm(self.pin_tilt, 0, pos)
-
-            time.sleep(0.02)
-
-    def pan_transition(self, start_pos, end_pos, clockwise=True):
-        """
-        Slowly transition the pan from start_pos to end_pos.
-        """
-        if clockwise:
-            increment = 2
         else:
+            increment = -1
+
+        for pos in range(self.cur_tilt, end_pos, increment):
+            self.pwm.set_pwm(self.pin_tilt, 0, pos)
+            time.sleep(0.02)
+        
+        self.cur_tilt = end_pos
+
+    def pan_transition(self, end_pos):
+        """
+        Slowly transition the pan from cur position to end_pos.
+        """
+        # Do a check to ensure in limits, otherwise reject
+        if end_pos > (self.pan_pwm_neutral + self.pan_pwm_range):
+            rospy.loginfo(f"Requested pan position {end_pos} is out of range.")
+            return
+        if end_pos < (self.pan_pwm_neutral - self.pan_pwm_range):
+            rospy.loginfo(f"Requested pan position {end_pos} is out of range.")
+            return
+
+        # Check if clockwise
+        if (end_pos - self.cur_pan) > 0:
+            increment = 2
+        else: 
             increment = -2
 
-        for pos in range(start_pos, end_pos, increment):
+        for pos in range(self.cur_pan, end_pos, increment):
             self.pwm.set_pwm(self.pin_pan, 0, pos)
             time.sleep(0.02)
 
+        self.cur_pan = end_pos
+
     def wake(self):
         # Start with the tilt moving up and then down.
-        self.tilt_transition(self.tilt_pwm_start, 240)
+        self.tilt_transition(240)
         time.sleep(0.5)
         # Transition back to the neutral position
-        self.tilt_transition(240, self.tilt_pwm_neutral, upwards=False)
+        self.tilt_transition(self.tilt_pwm_neutral)
         time.sleep(1.0)
 
         # Transition from neutral clockwise to end position
         acw_lim = self.pan_pwm_neutral + self.pan_pwm_range
         cw_lim = self.pan_pwm_neutral - self.pan_pwm_range
-        self.pan_transition(self.pan_pwm_neutral, acw_lim, clockwise=True)
+        self.pan_transition(acw_lim)
         time.sleep(0.5)
         
         #  Transition all the way anticlockwise to the end position
-        self.pan_transition(acw_lim, cw_lim, clockwise=False)
+        self.pan_transition(cw_lim)
         time.sleep(0.5)
-        self.pan_transition(cw_lim, self.pan_pwm_neutral, clockwise=True)
+        self.pan_transition(self.pan_pwm_neutral)
         time.sleep(2.0)
 
     def setPanTilt(self, ptu_angles):
