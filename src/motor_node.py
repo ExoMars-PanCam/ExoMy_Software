@@ -33,7 +33,7 @@ def cleanup_and_exit(con=None, exit_code=0):
                 print(f"Error closing socket: {socket_error}")
 
         # PTU back to default
-        ptu.pan_transition(290)
+        ptu.pan_transition(315)
         ptu.tilt_transition(340)
 
         # Stop all motors
@@ -107,6 +107,8 @@ def request_image(soc, sol, img):
     if soc is None:
         return img
 
+    time.sleep(3)
+
     text = f"Sol_{sol:02d}_img_{img:02d}".encode('utf-8')
     img += 1
     soc.sendall(text)
@@ -115,7 +117,7 @@ def request_image(soc, sol, img):
     response = soc.recv(1024)
     print(f"Received echo: {response.decode('utf-8')}")
 
-    time.sleep(3)
+    time.sleep(2)
 
     return img
 
@@ -126,6 +128,8 @@ if __name__ == "__main__":
     rospy.loginfo("Starting the motors node")
 
     con = setup_image_socket()
+
+    # walking.stand() #! Only run once when first powering up
 
     ## ---------------------------------------------------------------------------------------------
     ## Start of scripting

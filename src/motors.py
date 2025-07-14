@@ -82,7 +82,7 @@ class Motors():
                              self.steering_pwm_neutral[wheel_name])
             time.sleep(0.1)
 
-        self.wiggle()
+        # self.wiggle()
 
     def wiggle(self):
         time.sleep(0.2)

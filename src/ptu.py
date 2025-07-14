@@ -66,6 +66,8 @@ class Ptu():
         Slowly transition the pan from cur position to end_pos.
         """
         # Do a check to ensure in limits, otherwise reject
+        # Max 390, range 75 so min is 240
+        # Min 120
         if end_pos > (self.pan_pwm_neutral + self.pan_pwm_range):
             rospy.loginfo(f"Requested pan position {end_pos} is out of range.")
             return
