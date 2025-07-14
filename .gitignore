@@ -2,5 +2,6 @@
 config/exomy.yaml
 .DS_Store
 *.code-workspace
+output/
 .vscode/
 __pycache__

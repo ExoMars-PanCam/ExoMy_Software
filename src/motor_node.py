@@ -15,17 +15,23 @@ import socket
 HOST = "172.17.0.1"  # Docker host IP on Linux (alternative to host.docker.internal)
 PORT = 8015
 
-
 ptu = Ptu()
 motors = Motors()
 walking = Walking()
 
 # global watchdog_timer
 
-def cleanup_and_exit(exit_code=0):
+def cleanup_and_exit(con=None, exit_code=0):
     """Perform cleanup operations and exit gracefully"""
     print("Performing cleanup...")
     try:
+        if con is not None:
+            try:
+                con.close()
+                print("Socket connection closed")
+            except Exception as socket_error:
+                print(f"Error closing socket: {socket_error}")
+
         # Stop all motors
         motors.stopMotors()
         motors.setDriving([0, 0, 0, 0, 0, 0])
@@ -77,22 +83,59 @@ def watchdog(event):
     # motors.stopMotors()
     # walking.sit()
 
+def setup_image_socket():
+    # Connect to external echo server as a client
+    try:
+        print(f"Attempting to connect to echo server at {HOST}:{PORT}")
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(f"Now Connecting")
+        s.connect((HOST, PORT))
+        print(f"Connected to echo server")
+        return s
+    except ConnectionRefusedError:
+        print(f"Could not connect to echo server at {HOST}:{PORT}")
+        print("Make sure echo_server.py is running outside Docker")
+    except Exception as e:
+        print(f"Client error: {e}")
+
+
+def request_image(soc, sol, img):
+    if soc is None:
+        return img
+
+    text = f"Sol_{sol:02d}_img_{img:02d}".encode('utf-8')
+    img += 1
+    soc.sendall(text)
+
+    # Receive echo back from server
+    response = soc.recv(1024)
+    print(f"Received echo: {response.decode('utf-8')}")
+
+    time.sleep(1)
+
+    return img
+
 
 if __name__ == "__main__":
     # This node waits for commands from the robot and sets the motors accordingly
     rospy.init_node("motors")
     rospy.loginfo("Starting the motors node")
 
+    con = setup_image_socket()
+
     ## ---------------------------------------------------------------------------------------------
     ## Start of scripting
+    sol = 1
+    img = 1
 
-    ptu.wake()
-
+    img = request_image(con, sol, img)
+    img = request_image(con, sol, img)
+    img = request_image(con, sol, img)
 
 
     ## ---------------------------------------------------------------------------------------------
     ## End of Script 
-    cleanup_and_exit()
+    cleanup_and_exit(con)
 
     # rospy.on_shutdown(shutdown)
 
