@@ -29,18 +29,19 @@ class Ptu():
         self.pan_pwm_range = rospy.get_param("ptu_pwm_range_pan")
         self.tilt_pwm_range = rospy.get_param("ptu_pwm_range_tilt")
 
-        self.tilt_pwm_start = 185 #TODO! Move to config file
+        # self.tilt_pwm_start = 380 #TODO! Move to config file
+        self.tilt_pwm_start = 340
 
-        self.wake() # First movement of the PTU
+        # self.wake() # First movement of the PTU
 
     def tilt_transition(self, start_pos, end_pos, upwards=True):
         """
         Slowly transition the tilt from start_pos to end_pos.
         """
         if upwards:
-            increment = 1
-        else:
             increment = -1
+        else:
+            increment = 1
 
         for pos in range(start_pos, end_pos, increment):
             self.pwm.set_pwm(self.pin_tilt, 0, pos)
@@ -62,20 +63,22 @@ class Ptu():
 
     def wake(self):
         # Start with the tilt moving up and then down.
-        self.tilt_transition(self.tilt_pwm_start, 425)
+        self.tilt_transition(self.tilt_pwm_start, 240)
         time.sleep(0.5)
         # Transition back to the neutral position
-        self.tilt_transition(445, self.tilt_pwm_neutral, upwards=False)
+        self.tilt_transition(240, self.tilt_pwm_neutral, upwards=False)
         time.sleep(1.0)
 
         # Transition from neutral clockwise to end position
-        self.pan_transition(self.pan_pwm_neutral, 470, clockwise=True)
+        acw_lim = self.pan_pwm_neutral + self.pan_pwm_range
+        cw_lim = self.pan_pwm_neutral - self.pan_pwm_range
+        self.pan_transition(self.pan_pwm_neutral, acw_lim, clockwise=True)
         time.sleep(0.5)
         
         #  Transition all the way anticlockwise to the end position
-        self.pan_transition(455, 125, clockwise=False)
+        self.pan_transition(acw_lim, cw_lim, clockwise=False)
         time.sleep(0.5)
-        self.pan_transition(125, self.pan_pwm_neutral, clockwise=True)
+        self.pan_transition(cw_lim, self.pan_pwm_neutral, clockwise=True)
         time.sleep(2.0)
 
     def setPanTilt(self, ptu_angles):
