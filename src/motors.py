@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 from std_msgs.msg import String
+import math
 
 import time
 
@@ -82,6 +83,20 @@ class Motors():
                              self.steering_pwm_neutral[wheel_name])
             time.sleep(0.1)
 
+        ## For point turns
+        # x = axes distance
+        # y = axes width
+        
+        # Rear (r = rear)
+        self.wheel_rx = 16.0
+        self.wheel_ry = 27.0
+        
+        # Front (f = front)
+        self.wheel_fx = 16.0
+        self.wheel_fy = 27.0
+        self.point_turn_angle = int(math.degrees(math.atan((self.wheel_rx+self.wheel_fx) / self.wheel_ry)))
+        self.point_turn_angle_center = int(math.degrees(math.atan((((self.wheel_rx+self.wheel_fx) / 2 ) - self.wheel_fx) / (self.wheel_ry / 2))))
+
         # self.wiggle()
 
     def wiggle(self):
@@ -127,3 +142,86 @@ class Motors():
 
         for wheel_name, motor_pin in self.pins['drive'].items():
             self.pwm.set_pwm(motor_pin, 0, duty_cycle)
+
+    def crabbing_drive(self, angle, duration=0.0):
+
+        angle_array = [angle]*6
+        self.setSteering(angle_array)
+        time.sleep(1.0)
+        drive_speed = 25
+        driving_array = [drive_speed]*6
+        self.setDriving(driving_array)
+        time.sleep(duration)
+        
+        # Stop driving
+        self.setDriving([0, 0, 0, 0, 0, 0])
+
+        # Reset crabbing
+        self.setSteering([0, 0, 0, 0, 0, 0])
+        time.sleep(1.0)
+
+    def point_turn(self, duration=5, clockwise=True):
+        """
+        Perform a point turn for the specified duration.
+        If clockwise is True, the robot turns clockwise, otherwise counter-clockwise.
+        """
+        steering_angles = [0]*6
+        motor_speeds = [0]*6
+        
+        #For ExoMy approx. 55 degree
+        steering_angles[self.FL] = self.point_turn_angle
+        steering_angles[self.FR] = -self.point_turn_angle
+        steering_angles[self.CL] = self.point_turn_angle_center
+        steering_angles[self.CR] = -self.point_turn_angle_center
+        steering_angles[self.RL] = -self.point_turn_angle
+        steering_angles[self.RR] = self.point_turn_angle
+
+        self.setSteering(steering_angles)
+
+        # Delay before starting to drive
+        time.sleep(1.0)
+
+        # Set rotation speed
+        v = 50  
+        outer_turning_radius = math.sqrt(math.pow(self.wheel_rx+self.wheel_fx,2) + math.pow(self.wheel_ry,2)) / 2
+        inner_turning_radius = math.sqrt(math.pow(((self.wheel_rx+self.wheel_fx) / 2 ) - self.wheel_rx,2) + math.pow((self.wheel_ry / 2),2))
+        
+        v_outer = v
+        v_inner = int(v*inner_turning_radius/outer_turning_radius)
+            
+        if clockwise:
+            # Right turn
+            motor_speeds[self.FL] = v_outer
+            motor_speeds[self.FR] = -v_outer
+            motor_speeds[self.CL] = v_inner
+            motor_speeds[self.CR] = -v_inner
+            motor_speeds[self.RL] = v_outer
+            motor_speeds[self.RR] = -v_outer
+        else:
+            # Left turn
+            motor_speeds[self.FL] = -v_outer
+            motor_speeds[self.FR] = v_outer
+            motor_speeds[self.CL] = -v_inner
+            motor_speeds[self.CR] = v_inner
+            motor_speeds[self.RL] = -v_outer
+            motor_speeds[self.RR] = v_outer
+
+        self.setDriving(motor_speeds)
+        time.sleep(duration)
+
+        # Stop driving
+        self.setDriving([0, 0, 0, 0, 0, 0])
+        # Return angles to neutral
+        self.setSteering([0, 0, 0, 0, 0, 0])
+
+    def straight_drive(self, duration=5.0, forward=True):
+        """
+        Drive straight for the specified duration.
+        If forward is True, the robot drives forward, otherwise backward.
+        """
+        driving_array = [100]*6 if forward else [-100]*6
+        self.setDriving(driving_array)
+        time.sleep(duration)
+        
+        # Stop driving
+        self.setDriving([0, 0, 0, 0, 0, 0])

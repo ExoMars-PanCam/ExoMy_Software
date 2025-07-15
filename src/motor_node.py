@@ -136,35 +136,43 @@ if __name__ == "__main__":
     sol = 1
     img = 1
 
-    ## Example of PTU and image sequence
-    # pan 420 out of limits and ignored
-    ptu.pan_transition(420)
-
     # First position
-    ptu.pan_transition(410)
+    ptu.pan_transition(390)
     img = request_image(con, sol, img)
     
     # Second position
     ptu.pan_transition(300)
     img = request_image(con, sol, img)
 
-    # First tilt out of limits and ignored
-    ptu.tilt_transition(470)
-    # Tilt down
+    # Third position
     ptu.tilt_transition(460)
     img = request_image(con, sol, img)
+
+    # Fourth position
+    ptu.tilt_transition(340)
+    ptu.pan_transition(240)
+    img = request_image(con, sol, img)
+
+    # Return PTU to default position
+    ptu.pan_transition(315)
+    ptu.tilt_transition(340)
+
+    # Simple forwards drive and then backwards
+    motors.straight_drive(5, forward=True)
+    img = request_image(con, sol, img)
     
-    # Pan 160 is out of limits and ignored
-    ptu.pan_transition(160)
-    ptu.pan_transition(170)
+    motors.straight_drive(5, forward=False)
     img = request_image(con, sol, img)
 
-    # Final tilt out of limits and ignored
-    ptu.tilt_transition(210)
-    ptu.tilt_transition(220)
+    # Point turn approximately 90 degrees and then back
+    motors.point_turn(duration=6.2, clockwise=True)
+    img = request_image(con, sol, img)
+    motors.point_turn(duration=6.2, clockwise=False)
     img = request_image(con, sol, img)
 
-
+    # Show crabbing
+    motors.crabbing_drive(-45, duration=5.0)
+    img = request_image(con, sol, img)
 
     ## ---------------------------------------------------------------------------------------------
     ## End of Script 
