@@ -199,12 +199,12 @@ class Motors():
             motor_speeds[self.RR] = -v_outer
         else:
             # Left turn
-            motor_speeds[self.FL] = -v_outer
-            motor_speeds[self.FR] = v_outer
-            motor_speeds[self.CL] = -v_inner
-            motor_speeds[self.CR] = v_inner
-            motor_speeds[self.RL] = -v_outer
-            motor_speeds[self.RR] = v_outer
+            motor_speeds[self.FL] = -v_outer*1.125
+            motor_speeds[self.FR] = v_outer*1.125
+            motor_speeds[self.CL] = -v_inner*1.125
+            motor_speeds[self.CR] = v_inner*1.125
+            motor_speeds[self.RL] = -v_outer*1.125
+            motor_speeds[self.RR] = v_outer*1.125
 
         self.setDriving(motor_speeds)
         time.sleep(duration)
