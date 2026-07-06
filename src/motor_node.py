@@ -10,6 +10,7 @@ from standing_modes import StandingMode
 from motors import Motors
 from walking import Walking
 from ptu import Ptu
+from workshop_script import run_workshop_script
 import socket
 
 HOST = "172.17.0.1"  # Docker host IP on Linux (alternative to host.docker.internal)
@@ -129,53 +130,20 @@ if __name__ == "__main__":
 
     con = setup_image_socket()
 
-    # walking.stand() #! Only run once when first powering up
+    walking.stand() #! Only run once when first powering up
 
-    ## ---------------------------------------------------------------------------------------------
-    ## Start of scripting
     sol = 1
     img = 1
 
-    # First position
-    ptu.pan_transition(390)
-    img = request_image(con, sol, img)
-    
-    # Second position
-    ptu.pan_transition(300)
-    img = request_image(con, sol, img)
+    img = run_workshop_script(
+        motors,
+        ptu,
+        connection=con,
+        image_fn=request_image,
+        sol=sol,
+        img=img,
+    )
 
-    # Third position
-    ptu.tilt_transition(460)
-    img = request_image(con, sol, img)
-
-    # Fourth position
-    ptu.tilt_transition(340)
-    ptu.pan_transition(240)
-    img = request_image(con, sol, img)
-
-    # Return PTU to default position
-    ptu.pan_transition(315)
-    ptu.tilt_transition(340)
-
-    # Simple forwards drive and then backwards
-    motors.straight_drive(5, forward=True)
-    img = request_image(con, sol, img)
-    
-    motors.straight_drive(5, forward=False)
-    img = request_image(con, sol, img)
-
-    # Point turn approximately 90 degrees and then back
-    motors.point_turn(duration=6.2, clockwise=True)
-    img = request_image(con, sol, img)
-    motors.point_turn(duration=6.2, clockwise=False)
-    img = request_image(con, sol, img)
-
-    # Show crabbing
-    motors.crabbing_drive(-45, duration=5.0)
-    img = request_image(con, sol, img)
-
-    ## ---------------------------------------------------------------------------------------------
-    ## End of Script 
     cleanup_and_exit(con)
 
     # rospy.on_shutdown(shutdown)
