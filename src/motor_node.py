@@ -135,16 +135,22 @@ if __name__ == "__main__":
     sol = 1
     img = 1
 
-    img = run_workshop_script(
-        motors,
-        ptu,
-        connection=con,
-        image_fn=request_image,
-        sol=sol,
-        img=img,
-    )
+    
+    
 
-    cleanup_and_exit(con)
+    # walking.sit()
+
+    # img = run_workshop_script(
+    #     motors,
+    #     ptu,
+    #     connection=con,
+    #     image_fn=request_image,
+    #     sol=sol,
+    #     img=img,
+    # )
+    rospy.Subscriber("/motor_commands", MotorCommands, callback, queue_size=1)
+    rospy.on_shutdown(shutdown)
+    rospy.spin()
 
     # rospy.on_shutdown(shutdown)
 

@@ -76,7 +76,7 @@ class Walking():
     def stand(self):
         # Raise up the robot to the lean position
         self.transition(160, 0, True)
-        self.wave()
+        # self.wave()
 
     def sit(self):
         # Sit the robot down
