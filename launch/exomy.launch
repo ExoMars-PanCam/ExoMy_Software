@@ -5,6 +5,7 @@
 
     <node respawn="false" pkg="joy" type="joy_node" name="joy_node">
         <param name="coalesce_interval" value="0.05"/>
+        <param name="autorepeat_rate" value="10.0"/>
     </node>
 
     <node pkg="web_video_server" type="web_video_server"  name="web_video_server" respawn="false" output="screen">

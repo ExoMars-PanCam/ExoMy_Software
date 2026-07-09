@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     con = setup_image_socket()
 
-    walking.stand() #! Only run once when first powering up
+    # walking.stand() #! Only run once when first powering up
 
     sol = 1
     img = 1
