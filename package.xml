@@ -18,6 +18,7 @@
   <build_export_depend>sensor_msgs</build_export_depend>
   <exec_depend>python-rpi.gpio</exec_depend>
   <exec_depend>rospy</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
 

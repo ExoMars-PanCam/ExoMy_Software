@@ -122,6 +122,18 @@ def request_image(soc, sol, img):
 
     return img
 
+def nod():
+    neutral_tilt = 340
+    nod_amount = 8
+
+    try:
+        ptu.tilt_transition(neutral_tilt - nod_amount)
+        rospy.sleep(0.3)
+        ptu.tilt_transition(neutral_tilt + nod_amount)
+        rospy.sleep(0.3)
+    finally:
+        ptu.tilt_transition(neutral_tilt)
+
 
 if __name__ == "__main__":
     # This node waits for commands from the robot and sets the motors accordingly
@@ -130,7 +142,7 @@ if __name__ == "__main__":
 
     con = setup_image_socket()
 
-    # walking.stand() #! Only run once when first powering up
+    nod() #! Only run once when first powering up
 
     sol = 1
     img = 1

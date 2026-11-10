@@ -15,14 +15,12 @@ RUN pip install adafruit-pca9685
 
 # Install packages for web application
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt-get update && \
-    apt-get install nodejs -y
+RUN apt-get update && apt-get install -y nodejs npm
 RUN npm install http-server -g
 
 # Install packages for camera use
 RUN apt-get update && \
-    apt-get install ros-noetic-web-video-server ros-noetic-usb-cam -y
-
+    apt-get install -y ros-noetic-web-video-server ros-noetic-usb-cam
 # Add ros sourcing to bashrc
 RUN echo ". /opt/ros/noetic/setup.bash" >> ~/.bashrc
 

@@ -13,14 +13,12 @@
         <param name="quality" value="50"/>
     </node>
 
-    <node pkg="usb_cam" type="usb_cam_node" name="pi_cam" respawn="false" output="screen">
-        <param name="framerate" value="10"/>
-        <param name="video_device" value="/dev/video0"/>
-        <param name="image_width" value="640"/>
-        <param name="image_height" value="480"/>
-        <param name="pixel_format" value="yuyv"/>
-        <param name="camera_frame_id" value="pi_cam"/>
-        <param name="io_method" value="mmap"/>
+    <node pkg="exomy" type="pi_camera_bridge.py" name="pi_camera_bridge"
+          respawn="true" respawn_delay="5" output="screen">
+        <param name="host" value="172.17.0.1"/>
+        <param name="port" value="8888"/>
+        <param name="topic" value="/pi_cam/image_raw"/>
+        <param name="frame_id" value="pi_cam"/>
     </node>
 
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
